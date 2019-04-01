@@ -1,0 +1,249 @@
+<div class="article fmt article__content" data-id="1190000018723460" data-license="cc">
+
+  <h2 id="articleHeader0">前言</h2>
+  <blockquote>大家好，我是<a href="https://github.com/simbawus" rel="nofollow noreferrer" target="_blank">simbawu</a> ，<a
+      href="https://github.com/BooheeFE" rel="nofollow noreferrer" target="_blank">@BooheeFE</a> Team
+    Leader，关于这篇文章，有问题欢迎来<a href="https://github.com/simbawus/blog/issues/16" rel="nofollow noreferrer"
+      target="_blank">这里</a>讨论。</blockquote>
+  <p>
+    随着移动互联网的普及和快速发展，手机成了互联网行业最大的流量分发入口。以及随着5G的快速发展，未来越来越多的“端”也会如雨后春笋般快速兴起。而“快”作为互联网的生存之道，为了占领市场，企业也会积极跟进，快速布局。同一个应用，各个“端”独立开发，不仅开发周期长，而且人员成本高。同时，作为技术人员，也不应该满足于这种重复、低能的工作状态。在这样的形势下，跨平台的技术方案也受到越来越多人和企业的关注。接下来，我将从原理、优缺点等方面为大家分享《跨平台技术演进》。
+  </p>
+  <h2 id="articleHeader1">H5</h2>
+  <p>说到跨平台，没人不知道H5。不管是在Mac、Windows、Linux、iOS、Android还是其他平台，只要给一个浏览器，连“月球”上它都能跑。</p>
+  <h3 id="articleHeader2">浏览器架构</h3>
+  <p>下面，我们来看看让H5如此横行霸道的浏览器的架构：</p>
+  <p><span class="img-wrap"><img data-src="https://ws1.sinaimg.cn/large/006tKfTcly1g1fcdcmdeij30dw09f3z2.jpg"
+        src="https://ws1.sinaimg.cn/large/006tKfTcly1g1fcdcmdeij30dw09f3z2.jpg" alt="浏览器架构" title="浏览器架构"
+        style="cursor: pointer; display: inline;"></span></p>
+  <ul>
+    <li>User Interface 用户界面：提供用户与浏览器交互</li>
+    <li>Browser Engine 浏览器引擎：控制渲染引擎与JS解释器</li>
+    <li>Rendering Engine 渲染引擎：负责页面渲染</li>
+    <li>JavaScript Interpreter JS解释器：执行JS代码，输出结果给渲染引擎</li>
+    <li>Networking 网络工作组：处理网络请求</li>
+    <li>UI Backend UI后端：绘制窗口小部件</li>
+    <li>Data Storage 数据存储：管理用户数据</li>
+  </ul>
+  <p>浏览器由以上7个部分组成，而“渲染引擎”是性能优化的重中之重，一起了解其中的渲染原理。</p>
+  <h3 id="articleHeader3">渲染引擎原理</h3>
+  <p>不同的浏览器内核不同，渲染过程会不太一样，但主要流程还是一致的。</p>
+  <p><span class="img-wrap"><img data-src="https://ws4.sinaimg.cn/large/006tKfTcly1g1fcduo111j30hc08174s.jpg"
+        src="https://ws4.sinaimg.cn/large/006tKfTcly1g1fcduo111j30hc08174s.jpg" alt="WebKit 主流程" title="WebKit 主流程"
+        style="cursor: pointer; display: inline;"></span></p>
+  <p>分为下面6步骤：</p>
+  <ol>
+    <li>HTML解析出DOM Tree</li>
+    <li>CSS解析出CSSOM</li>
+    <li>DOM Tree与CSSOM关联生成Render Tree</li>
+    <li>Layout 根据Render Tree计算每个节点的尺寸、位置</li>
+    <li>Painting 根据计算好的信息绘制整个页面的像素信息</li>
+    <li>Composite 将多个复合图层发送给GPU，GPU会将各层合成，然后显示在屏幕上。</li>
+  </ol>
+  <p>从以上6步，我们可以总结渲染优化的要点：</p>
+  <ul>
+    <li>Layout在浏览器渲染过程中比较耗时，应尽可能避免重排的产生</li>
+    <li>复合图层占用内存比重非常高，可采用减小复合图层进行优化</li>
+  </ul>
+  <p>以上就是浏览器端的内容。但H5作为跨平台技术的载体，是如何与不同平台的App进行交互的呢？这时候JSBridge就该出场了。</p>
+  <h3 id="articleHeader4">JSBridge原理</h3>
+  <p>JSBridge，顾名思义，是JS和Native之间的桥梁，用来进行JS和Native之间的通信。</p>
+  <p><span class="img-wrap"><img data-src="https://ws1.sinaimg.cn/large/006tKfTcly1g1d7yft9f6j30rs0bgmy6.jpg"
+        src="https://ws1.sinaimg.cn/large/006tKfTcly1g1d7yft9f6j30rs0bgmy6.jpg" alt="JS" title="JS"
+        style="cursor: pointer; display: inline;"></span></p>
+  <p>通信分为以下两个维度：</p>
+  <ul>
+    <li>
+      <p><strong>JavaScript 调用 Native</strong>，有两种方式：</p>
+      <ol>
+        <li>拦截URL Scheme：URL Scheme是一种类似于url的链接<code>（boohee://goods/876898）</code>,当web前端发送URL Scheme请求之后，Native
+          拦截到请求并根据URL Scheme进行相关操作。</li>
+        <li>注入API：通过 WebView 提供的接口，向 JavaScript 的 Context（window）中注入对象或者方法，让 JavaScript 调用时，直接执行相应的 Native 代码逻辑，达到
+          JavaScript 调用 Native 的目的。</li>
+      </ol>
+    </li>
+    <li>
+      <strong>Native 调用 JavaScript</strong>：<br>JavaScript暴露一个对象如JSBridge给window，让Native能直接访问。</li>
+  </ul>
+  <p>那么App内加载H5的过程是什么样的呢？</p>
+  <h3 id="articleHeader5">App打开H5过程</h3>
+  <p><span class="img-wrap"><img data-src="https://ws3.sinaimg.cn/large/006tKfTcly1g176pz4oawj316m0e0abv.jpg"
+        src="https://ws3.sinaimg.cn/large/006tKfTcly1g176pz4oawj316m0e0abv.jpg" alt="" title=""
+        style="cursor: pointer; display: inline;"></span></p>
+  <p>打开H5分为4个阶段：</p>
+  <ol>
+    <li>交互无反馈</li>
+    <li>打开页面 白屏</li>
+    <li>请求API，处于loading状态</li>
+    <li>出现数据，正常展现</li>
+  </ol>
+  <p>这四步，对应的过程如上图所以，我们可以针对性的做性能优化。</p>
+  <h3 id="articleHeader6">优缺点分析</h3>
+  <p>下面，我们进行H5的优缺点分析：</p>
+  <p><strong>优点</strong></p>
+  <ul>
+    <li>跨平台：只要有浏览器，任何平台都可以访问</li>
+    <li>开发成本低：生态成熟，学习成本低，调试方便</li>
+    <li>迭代速度快：无需审核，及时响应，用户可毫无感知使用最新版</li>
+  </ul>
+  <p><strong>缺点</strong></p>
+  <ul>
+    <li>性能问题：在反应速度、流畅度、动画方面远不及原生</li>
+    <li>功能问题：对摄像头、陀螺仪、麦克风等硬件支持较差</li>
+  </ul>
+  <p>虽然H5目前还存在不足，但随着PWA、WebAssembly等技术的进步，相信H5在未来能够得到越来也好的发展。</p>
+  <h2 id="articleHeader7">小程序</h2>
+  <p>2018年是微信小程序飞速发展的一年，19年，各大厂商快速跟进，已经有了很大的影响力。下面，我们以微信小程序为例，分析小程序的技术架构。</p>
+  <p><span class="img-wrap"><img data-src="https://ws4.sinaimg.cn/large/006tKfTcgy1g1dx90esaqj30tn0gpdhp.jpg"
+        src="https://ws4.sinaimg.cn/large/006tKfTcgy1g1dx90esaqj30tn0gpdhp.jpg" alt="" title=""
+        style="cursor: pointer; display: inline;"></span></p>
+  <p>小程序跟H5一样，也是基于Webview实现。但它包含View视图层、App Service逻辑层两部分，分别独立运行在各自的WebView线程中。</p>
+  <h3 id="articleHeader8">View</h3>
+  <p>可以理解为h5的页面，提供UI渲染。由WAWebview.js来提供底层的功能,具体如下：</p>
+  <ul>
+    <li>消息通信封装为WeixinJSBridge</li>
+    <li>日志组件Reporter封装</li>
+    <li>wx api（UI相关）</li>
+    <li>小程序组件实现和注册</li>
+    <li>VirtualDOM，Diff和Render UI实现</li>
+    <li>页面事件触发</li>
+  </ul>
+  <p>每个窗口都有一个独立的WebView进程，因此微信限制不能打开超过5个层级的页面来保障用户体验。</p>
+  <h3 id="articleHeader9">App Service</h3>
+  <p>提供逻辑处理、数据请求、接口调用。由WAService.js来提供底层的功能,具体如下：</p>
+  <ul>
+    <li>日志组件Reporter封装</li>
+    <li>wx api</li>
+    <li>App,Page,getApp,getCurrentPages等全局方法</li>
+    <li>AMD模块规范的实现</li>
+  </ul>
+  <p>运行环境：</p>
+  <ul>
+    <li>iOS：JavaScriptCore</li>
+    <li>Andriod：X5内核，基于Mobile Chrome 53/57</li>
+    <li>DevTool：nwjs Chrome 内核</li>
+  </ul>
+  <p>仅有一个WebView进程</p>
+  <h3 id="articleHeader10">View &amp; App Service通信</h3>
+  <p>视图层和逻辑层通过系统层的JSBridage进行通信，逻辑层把数据变化通知到视图层，触发视图层页面更新，视图层将触发的事件通知到逻辑层进行业务处理。</p>
+  <h3 id="articleHeader11">优缺点分析</h3>
+  <p><strong>优点</strong></p>
+  <ul>
+    <li>预加载WebView，准备新页面渲染</li>
+    <li>View层和逻辑层分离，通过数据驱动，不直接操作DOM</li>
+    <li>使用Virtual DOM，进行局部更新</li>
+    <li>组件化开发</li>
+  </ul>
+  <p><strong>缺点</strong></p>
+  <ul>
+    <li>仍使用WebView渲染，并非原生渲染，体验不佳</li>
+    <li>不能运行在非微信环境内</li>
+    <li>没有window、document对象，不能使用基于浏览器的JS库</li>
+    <li>不能灵活操作 DOM，无法实现较为复杂的效果</li>
+    <li>页面大小、打开页面数量都受到限制</li>
+  </ul>
+  <p>既然WebView性能不佳，那有没有更好的方案呢？下面我们看看React Native。</p>
+  <h2 id="articleHeader12">React Native</h2>
+  <p><span class="img-wrap"><img data-src="https://ws2.sinaimg.cn/large/006tKfTcly1g1ed09geyrj30go09g74o.jpg"
+        src="https://ws2.sinaimg.cn/large/006tKfTcly1g1ed09geyrj30go09g74o.jpg" alt="" title=""
+        style="cursor: pointer; display: inline;"></span></p>
+  <p>RN的理念是在不同平台上编写基于React的代码，实现Learn once, write anywhere。</p>
+  <p>Virtual DOM在内存中，可以通过不同的渲染引擎生成不同平台下的UI，JS和Native之间通过Bridge通信</p>
+  <h3 id="articleHeader13">React Native 工作原理</h3>
+  <p><span class="img-wrap"><img data-src="https://ws4.sinaimg.cn/large/006tKfTcly1g1ed5e8t4lj30go0a0mxy.jpg"
+        src="https://ws4.sinaimg.cn/large/006tKfTcly1g1ed5e8t4lj30go0a0mxy.jpg" alt="" title=""
+        style="cursor: pointer; display: inline;"></span></p>
+  <p>在 React 框架中，JSX 源码通过 React 框架最终渲染到了浏览器的真实 DOM 中，而在 React Native 框架中，JSX 源码通过 React Native
+    框架编译后，与Native原生的UI组件进行映射，用原生代替DOM元素来渲染，在UI渲染上非常接近Native App。</p>
+  <p>### React Native 与Native平台通信</p>
+  <p><span class="img-wrap"><img data-src="https://ws1.sinaimg.cn/large/006tKfTcly1g1ede43rtgj30wg0u0qdd.jpg"
+        src="https://ws1.sinaimg.cn/large/006tKfTcly1g1ede43rtgj30wg0u0qdd.jpg" alt="" title=""
+        style="cursor: pointer; display: inline;"></span></p>
+  <ul>
+    <li>React Native用JavaScriptCore作为JS的解析引擎，在Android上，需要应用自己附带JavaScriptCore，iOS上JavaScriptCore属于系统的一部分，不需要应用附带。</li>
+    <li>用Bridge将JS和原生Native Code连接起来。Native和 JavaScript 两端都保存了一份配置表，里面标记了所有Native暴露给 JavaScript 的模块和方法。交互通过传递
+      ModuleId、MethodId 和 Arguments 进行。</li>
+  </ul>
+  <h3 id="articleHeader14">优缺点分析</h3>
+  <p><strong>优点</strong></p>
+  <ul>
+    <li>垮平台开发：相比原生的ios 和 android app各自维护一套业务逻辑大同小异的代码，React Native 只需要同一套javascript 代码就可以运行于ios 和 android
+      两个平台，在开发、测试和维护的成本上要低很多。</li>
+    <li>快速编译：相比Xcode中原生代码需要较长时间的编译，React Native 采用热加载的即时编译方式，使得App UI的开发体验得到改善，几乎做到了和网页开发一样随时更改，随时可见的效果。</li>
+    <li>快速发布：React Native 可以通过 JSBundle 即时更新 App。相比原来冗长的审核和上传过程，发布和测试新功能的效率大幅提高。</li>
+    <li>渲染和布局更高效：React Native摆脱了WebView的交互和性能问题，同时可以直接套用网页开发中的css布局机制。脱了 autolayout 和 frame 布局中繁琐的数学计算，更加直接简便。</li>
+  </ul>
+  <p><strong>缺点</strong></p>
+  <ul>
+    <li>动画性能差：React Native 在动画效率和性能的支持还存在一些问题，性能上不如原生Api。</li>
+    <li>不能完全屏蔽原生平台：就目前的React Native 官方文档中可以发现仍有部分组件和API都区分了Android 和 IOS
+      版本,即便是共享组件,也会有平台独享的函数。也就是说仍不能真正实现严格意义上的“一套代码，多平台使用”。另外，因为仍对ios 和android的原生细节有所依赖，所以需要开发者若不了解原生平台，可能会遇到一些坑。</li>
+    <li>生态不完善：缺乏很多基本控件，第三方开源质量良莠不齐</li>
+  </ul>
+  <h3 id="articleHeader15">展望未来</h3>
+  <p>虽然RN还存在不足，但RN新版本已经做了如下改进，并且RN团队也在积极准备大版本重构，能否成为开发者们所信赖的跨平台方案，让我们拭目以待。</p>
+  <ol>
+    <li>改变线程模式。UI 更新不再同时需要在三个不同的线程上触发执行，而是可以在任意线程上同步调用 JavaScript 进行优先更新，同时将低优先级工作推出主线程，以便保持对 UI 的响应。</li>
+    <li>引入异步渲染能力。允许多个渲染并简化异步数据处理。</li>
+    <li>简化 JSBridge，让它更快、更轻量。</li>
+  </ol>
+  <p>既然React Native在渲染方面还摆脱不了原生，那有没有一种方案是直接操控GPU，自制引擎渲染呢，我们终于迎来了Flutter！</p>
+  <h2 id="articleHeader16">Flutter</h2>
+  <p>
+    Flutter是Google开发的一套全新的跨平台、开源UI框架，支持iOS、Android系统开发，并且是未来新操作系统Fuchsia的默认开发套件。渲染引擎依靠跨平台的Skia图形库来实现，依赖系统的只有图形绘制相关的接口，可以在最大程度上保证不同平台、不同设备的体验一致性，逻辑处理使用支持AOT的Dart语言，执行效率也比JavaScript高得多。
+  </p>
+  <h3 id="articleHeader17">Flutter架构原理</h3>
+  <p><span class="img-wrap"><img data-src="https://ws4.sinaimg.cn/large/006tKfTcly1g1f2l66rwhj31mm0u0qaq.jpg"
+        src="https://ws4.sinaimg.cn/large/006tKfTcly1g1f2l66rwhj31mm0u0qaq.jpg" alt="" title=""
+        style="cursor: pointer; display: inline;"></span></p>
+  <ul>
+    <li>Framework：由Dart实现，包括Material
+      Design风格的Widget,Cupertino(针对iOS)风格的Widgets，文本/图片/按钮等基础Widgets，渲染，动画，手势等。此部分的核心代码是:flutter仓库下的flutter
+      package，以及sky_engine仓库下的io,async,ui(dart:ui库提供了Flutter框架和引擎之间的接口)等package。</li>
+    <li>
+      <p>Engine：由C++实现，主要包括:Skia,Dart和Text。</p>
+      <ul>
+        <li>
+          <strong>Skia</strong>是开源的二维图形库，提供了适用于多种软硬件平台的通用API。其已作为Google Chrome，Chrome OS，Android, Mozilla Firefox,
+          Firefox OS等其他众多产品的图形引擎，支持平台还包括Windows7+,macOS
+          10.10.5+,iOS8+,Android4.1+,Ubuntu14.04+等。Skia作为渲染/GPU后端，在Android和Fuchsia上使用FreeType渲染，在iOS上使用CoreGraphics来渲染字体。
+        </li>
+        <li>
+          <strong>Dart</strong>部分主要包括:Dart Runtime，Garbage Collection(GC)，如果是Debug模式的话，还包括JIT(Just In
+          Time)支持。Release和Profile模式下，是AOT(Ahead Of Time)编译成了原生的arm代码，并不存在JIT部分。</li>
+        <li>Text即文本渲染，其渲染层次如下:衍生自minikin的libtxt库(用于字体选择，分隔行)。HartBuzz用于字形选择和成型。</li>
+      </ul>
+    </li>
+    <li>
+      <strong>Embedder</strong>：是一个嵌入层，即把Flutter嵌入到各个平台上去，这里做的主要工作包括渲染Surface设置,线程设置，以及插件等。从这里可以看出，Flutter的平台相关层很低，平台(如iOS)只是提供一个画布，剩余的所有渲染相关的逻辑都在Flutter内部，这就使得它具有了很好的跨端一致性。
+    </li>
+  </ul>
+  <h3 id="articleHeader18">Dart优势</h3>
+  <p>很多人会好奇，为什么Flutter要用Dart，而不是用JavaScript开发，这里列下Dart的优势</p>
+  <ul>
+    <li>Dart 的性能更好。Dart在 JIT模式下，速度与 JavaScript基本持平。但是 Dart支持 AOT，当以 AOT模式运行时，JavaScript便远远追不上了。速度的提升对高帧率下的视图数据计算很有帮助。
+    </li>
+    <li>Native Binding。在 Android上，v8的 Native Binding可以很好地实现，但是 iOS上的 JavaScriptCore不可以，所以如果使用 JavaScript，Flutter
+      基础框架的代码模式就很难统一了。而 Dart的 Native Binding可以很好地通过 Dart Lib实现。</li>
+    <li>Fuchsia OS。Fuchsia OS内置的应用浏览器就是使用 Dart语言作为 App的开发语言。</li>
+  </ul>
+  <h3 id="articleHeader19">优缺点分析</h3>
+  <p><strong>优点</strong></p>
+  <ul>
+    <li>性能强大：在两个平台上重写了各自的UIKit，对接到平台底层，减少UI层的多层转换，UI性能可以比肩原生</li>
+    <li>优秀的语言特性：参考上面Dart优势分析</li>
+    <li>路由设计优秀：Flutter的路由传值非常方便，push一个路由，会返回一个Future对象（也就是Promise对象），使用await或者.then就可以在目标路由pop，回到当前页面时收到返回值。</li>
+  </ul>
+  <p><strong>缺点</strong></p>
+  <ul>
+    <li>优点即缺点，Dart 语言的生态小，精通成本比较高</li>
+    <li>UI控件API设计不佳</li>
+    <li>与原生融合障碍很多，不利于渐进式升级</li>
+  </ul>
+  <h2 id="articleHeader20">总结</h2>
+  <p>移动互联网的普及和快速发展，跨平台技术风起云涌，这也是技术发展过程中的必经之路，等浪潮退去，才知道谁在裸泳。我个人更看好H5或类H5方案，给它一个浏览器，连“月球”都能跑，这才是真正的跨平台，其他都是浮云。</p>
+  <h2 id="articleHeader21">广而告之</h2>
+  <p>本文发布于<a href="https://github.com/BooheeFE/weekly" rel="nofollow noreferrer" target="_blank">薄荷前端周刊</a>，欢迎Watch
+    &amp; Star ★，转载请注明出处。</p>
+  <h3 id="articleHeader22">欢迎讨论，点个赞再走吧 ｡◕‿◕｡ ～</h3>
+
+</div>

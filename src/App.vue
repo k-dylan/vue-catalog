@@ -1,28 +1,80 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <div class="content" v-html="content" ref="content"></div>
+    <catalog class="catalog" :list="catalog.levels" :sequence="catalog.noLevels"></catalog>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import {catalog, getCatalog} from './components/index.js';
 
+
+import content from '!raw-loader!./content.html';
 export default {
   name: 'app',
+  data () {
+    return {
+      content: content,
+      catalog: {
+        levels: [], // 有层级关系的目录结构数组
+        noLevels: [], // 没有层级关系的目录结构数组
+      }
+    }
+  },
+  mounted () {
+    let {levels, noLevels} = getCatalog(this.$refs.content)
+    this.catalog = {
+      levels,
+      noLevels
+    }
+  },
   components: {
-    HelloWorld
+    catalog
   }
 }
 </script>
 
 <style lang="less">
-#app {
+body {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+  background-color: #f9f9f9; 
+  margin: 0;
+}
+#app {
+  width: 960px;
+  margin: 0 auto;
+  position: relative;
+  padding: 10px 0;
+  display: flex;
+}
+.content {
+  width: 700px;
+  background-color: #fff;
+  border: 1px solid #e8e8e8;
+  box-shadow: 0 2px 8px hsla(0,0% 56.1%.08);
+  box-sizing: border-box;
+  padding: 48px 60px;
+  pre {
+    border: 1px solid #ddd;
+    padding: 15px 20px;
+    background-color: #f9f9f9;
+    border-radius: 6px;
+    color: #595959;
+  }
+  img {
+    max-width: 100%;
+  }
+}
+.catalog {
+  border: 1px solid #e8e8e8;
+  margin-left: 10px;
+  background-color: #fff;
+  width: 250px;
+  align-self: flex-start;
+  position: sticky;
+  top: 10px;
 }
 </style>

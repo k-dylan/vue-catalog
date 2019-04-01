@@ -5,6 +5,7 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
+    "build-lib": "vue-cli-service build --target lib --name vueCatalog ./src/components/index.js",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
@@ -19,6 +20,7 @@
     "eslint-plugin-vue": "^5.0.0",
     "less": "^3.0.4",
     "less-loader": "^4.1.0",
+    "raw-loader": "^2.0.0",
     "vue-template-compiler": "^2.5.21"
   }
 }
