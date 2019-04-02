@@ -5,6 +5,10 @@
   "license": "MIT",
   "main": "./dist/vueCatalog.common.js",
   "unpkg": "./dist/vueCatalog.umd.js",
+  "repository": {
+     "type": "git",
+     "url": "https://github.com/k-dylan/vue-catalog.git"
+  },
   "keywords": [
     "vue",
     "vue2",
