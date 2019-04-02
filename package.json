@@ -1,11 +1,20 @@
 {
   "name": "vue-catalog",
   "version": "0.1.0",
-  "private": true,
+  "description": "vue文章目录提取展示插件",
+  "license": "MIT",
+  "main": "./dist/vueCatalog.common.js",
+  "unpkg": "./dist/vueCatalog.umd.js",
+  "keywords": [
+    "vue",
+    "vue2",
+    "vue-catalog",
+    "catalog"
+  ],
+  "author": "kdylan <kdylan@qq.com>",
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
-    "build-lib": "vue-cli-service build --target lib --name vueCatalog ./src/components/index.js",
+    "build": "vue-cli-service build --target lib --name vueCatalog ./src/components/index.js",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {

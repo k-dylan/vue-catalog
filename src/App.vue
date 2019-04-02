@@ -63,6 +63,7 @@ body {
     background-color: #f9f9f9;
     border-radius: 6px;
     color: #595959;
+    overflow-x: auto;
   }
   img {
     max-width: 100%;
