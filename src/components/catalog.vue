@@ -2,10 +2,10 @@
   <div>
     <ul>
       <catalogItem
+        v-for="(item, key) in list"
         :curCatalog="curCatalog"
         :class="catalogItemClassName"
         :curItemClassName="curItemClassName"
-        v-for="(item, key) in list"
         :key="key"
         :item="item"
       ></catalogItem>
@@ -57,6 +57,9 @@ export default {
       type: Boolean,
       default: true
     },
+    /**
+     * 当前正在浏览的目录标题样式
+     */
     curItemClassName: {
       type: String,
       default: "catalog-item-cur"
@@ -71,6 +74,9 @@ export default {
       if (this.list.length === 0) return [];
       if (this.sequence.length > 0) return this.sequence;
       return this.getSequenceList(this.list);
+    },
+    throttleScrollHandle () {
+      return this.throttle(this.onScrollHandle, 50)
     }
   },
 
@@ -82,13 +88,13 @@ export default {
 
   mounted() {
     if (this.isShowCur) {
-      window.addEventListener("scroll", this.onScrollHandle, false);
+      window.addEventListener("scroll", this.throttleScrollHandle, false);
     }
   },
 
   destroyed() {
     if (this.isShowCur) {
-      window.removeEventListener("scroll", this.onScrollHandle);
+      window.removeEventListener("scroll", this.throttleScrollHandle);
     }
   },
 
@@ -119,6 +125,26 @@ export default {
         if (item.subs.length > 0) item.subs.forEach(each);
       });
       return result;
+    },
+    /**
+     * 节流函数
+     */
+    throttle (fn, wait) {
+      let timeId = null;
+      let lastTime = 0;
+
+      return (...args) => {
+        let currentTime = Date.now();
+        if (currentTime >= lastTime + wait) {
+          fn(...args)
+          lastTime = currentTime
+        } else {
+          if (timeId) clearTimeout(timeId)
+          timeId = setTimeout(() => {
+            fn(...args)
+          }, wait);
+        }
+      }
     }
   },
 
