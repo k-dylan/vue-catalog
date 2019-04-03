@@ -35,7 +35,9 @@ export default {
 }
 ```
 - getCatalog：获取目录结构方法,有一个参数，要提取目录的dom节点对象或者节点ID；
+
 - catalog： 目录显示插件，主要参数如下：
+
 |参数名|类型|说明|默认|
 |--|--|--|--|
 |list|Array|要显示的目录结构（带层级），通过getCatalog提取|无|
