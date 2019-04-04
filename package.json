@@ -21,9 +21,13 @@
     "build": "vue-cli-service build --target lib --name vueCatalog ./src/components/index.js",
     "lint": "vue-cli-service lint"
   },
+  "prepublishOnly": "npm run build",
   "dependencies": {
     "vue": "^2.6.6"
   },
+  "files": [
+    "dist"
+  ],
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.5.0",
     "@vue/cli-plugin-eslint": "^3.5.0",
