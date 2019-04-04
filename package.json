@@ -1,13 +1,13 @@
 {
   "name": "vue-catalog",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "vue文章目录提取展示插件",
   "license": "MIT",
   "main": "./dist/vueCatalog.common.js",
   "unpkg": "./dist/vueCatalog.umd.js",
   "repository": {
-     "type": "git",
-     "url": "https://github.com/k-dylan/vue-catalog.git"
+    "type": "git",
+    "url": "https://github.com/k-dylan/vue-catalog.git"
   },
   "keywords": [
     "vue",
