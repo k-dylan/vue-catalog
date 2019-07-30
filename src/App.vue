@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <div class="content" v-html="content" ref="content"></div>
-    <catalog class="catalog" :list="catalog.levels" :sequence="catalog.noLevels"></catalog>
+    <catalog class="catalog" :list="catalog.levels" :sequence="catalog.noLevels" :showTitle="showTitle"></catalog>
   </div>
 </template>
 
@@ -26,6 +26,13 @@ export default {
     this.catalog = {
       levels,
       noLevels
+    }
+  },
+  methods: {
+    showTitle (el) {
+      el.scrollIntoView({
+        behavior: 'smooth' 
+      });
     }
   },
   components: {

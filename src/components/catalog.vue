@@ -8,6 +8,7 @@
         :curItemClassName="curItemClassName"
         :key="key"
         :item="item"
+        :showTitle="showTitle"
       ></catalogItem>
     </ul>
   </div>
@@ -63,6 +64,13 @@ export default {
     curItemClassName: {
       type: String,
       default: "catalog-item-cur"
+    },
+    /**
+     * 点击目录显示标题方法
+     */
+    showTitle: {
+      type: Function,
+      default: null
     }
   },
 

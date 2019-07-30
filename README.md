@@ -45,3 +45,4 @@ export default {
 |catalogItemClassName|String|目录结构列表项class类名|catalog-item|
 |curItemClassName|String|当前浏览的目录项class类名|catalog-item-cur|
 |isShowCur|Boolean|是否为正在浏览的目录项添加类名|true|
+|showTitle|Function|点击目录后执行的方法，参数：el点击的目录对应的标题节点|null|
